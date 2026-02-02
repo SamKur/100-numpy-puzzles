@@ -38,6 +38,9 @@ print(Z)
 ```python
 Z = np.zeros((10,10))
 print("%d bytes" % (Z.size * Z.itemsize))
+
+# Simpler alternative
+print("%d bytes" % Z.nbytes)
 ```
 #### 5. How to get the documentation of the numpy add function from the command line? (★☆☆)
 
@@ -545,7 +548,7 @@ s = StringIO('''1, 2, 3, 4, 5
 
                  ,  , 9,10,11
 ''')
-Z = np.genfromtxt(s, delimiter=",", dtype=np.int)
+Z = np.genfromtxt(s, delimiter=",", dtype = int, filling_values = 0)
 print(Z)
 ```
 #### 55. What is the equivalent of enumerate for numpy arrays? (★★☆)
@@ -993,7 +996,8 @@ print(sliding_window_view(Z, window_shape=4))
 
 Z = np.random.uniform(0,1,(10,10))
 U, S, V = np.linalg.svd(Z) # Singular Value Decomposition
-rank = np.sum(S > 1e-10)
+threshold = len(S) * S.max() * np.finfo(S.dtype).eps
+rank = np.sum(S > threshold)
 print(rank)
 
 # alternative solution:
@@ -1086,11 +1090,8 @@ k = 4
 windows = np.lib.stride_tricks.sliding_window_view(Z, (k, k))
 S = windows[::k, ::k, ...].sum(axis=(-2, -1))
 
-# Author: Jeff Luo (@Jeff1999)
-
-Z = np.ones((16, 16))
-k = 4
-print(sliding_window_view(Z, window_shape=(k, k))[::k, ::k].sum(axis=(-2, -1)))
+# alternative solution (by @Gattocrucco)
+S = Z.reshape(4, 4, 4, 4).sum((1, 3))
 ```
 #### 88. How to implement the Game of Life using numpy arrays? (★★★)
 
